@@ -13,10 +13,15 @@ import PersonalForm from './PersonalForm';
 import JobDetails from './JobDetails';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useDispatch, useSelector } from 'react-redux';
+import { nextStep, previousStep, updateErrors } from '../state/actions';
+import { object, string } from 'yup';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const steps = ['General Information', 'Personal Details', 'Job Details'];
 
 function getStepContent(step: number) {
+  
   switch (step) {
     case 0:
       return <GeneralForm />;
@@ -29,20 +34,60 @@ function getStepContent(step: number) {
   }
 }
 
+let generalSchema = object({
+  nationalId: string().required(),
+  firstName: string().required(),
+  lastName: string().required(),
+  DOB: string().required(),
+  gender: string().required(),
+  maritalStatus: string().required()
+});
+
+
 export default function Checkout() {
-  const [activeStep, setActiveStep] = React.useState(0);
-	
+  const activeStep = useSelector((state: any) => state.formStep);
+  const form = useSelector((state: any) => state.formData);
+  const errors = useSelector((state: any) => state.formErrors);
+  const [loading, setLoading] = React.useState(false);
+  const dispatch = useDispatch();
+  
+  const onSubmit = async () => {
+    await generalSchema.validate(form[activeStep], {
+			abortEarly: false
+		}).then((data) => {
+      dispatch(updateErrors(activeStep, {}));
+      setLoading(true);
+      setTimeout(() => {
+        dispatch(nextStep());
+        setLoading(false);
+      }, 2000);
+    }).catch((errors: any) => {
+			let formErrorsList: any = {};
+			if(errors.inner) {
+				errors.inner.map((error: any) => {
+					if(!formErrorsList[error.path])
+						formErrorsList[error.path] = error.message;
+				});
+				dispatch(updateErrors(activeStep, formErrorsList));
+			}
+		});
+  }
+
   const handleNext = () => {
-    setActiveStep(activeStep + 1);
+    onSubmit();
+    // dispatch(nextStep())
   };
 
   const handleBack = () => {
-    setActiveStep(activeStep - 1);
+    dispatch(previousStep());
   };
 
   return (
     <>
       <CssBaseline />
+      <pre>
+        {JSON.stringify(errors, null, 2)}
+      </pre>
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
           <Typography component="h1" variant="h4" align="center">
@@ -78,8 +123,10 @@ export default function Checkout() {
                   <Button
                     variant="contained"
                     onClick={handleNext}
+                    disabled={loading}
                     sx={{ mt: 3, ml: 1 }}
                   >
+                    {loading && <CircularProgress style={{marginRight: "1em"}} size={14} />}
                     {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
                   </Button>
                 </Box>
