@@ -20,7 +20,7 @@ const GeneralForm = forwardRef((props, ref) => {
     handleForm(name, value);
   }
   const handleForm = (name: string, value: any) => {
-    dispatch(updateForm(0, name, value));
+    dispatch(updateForm(CURRENT_STEP, name, value));
   }
   
   return (
@@ -28,9 +28,9 @@ const GeneralForm = forwardRef((props, ref) => {
       <Typography variant="h6" gutterBottom>
         General Information
       </Typography>
-      <pre>
+      {/* <pre>
         {JSON.stringify(form, null, 2)}
-      </pre>
+      </pre> */}
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <TextField
@@ -79,7 +79,6 @@ const GeneralForm = forwardRef((props, ref) => {
             label="Date of Birth"
             inputFormat="MM/DD/YYYY"
             value={form.DOB}
-            
             onChange={(value) => handleForm("DOB", value.toString())}
             renderInput={(params) => <TextField {...params} error={errors["DOB"]} helperText={errors["DOB"]} fullWidth />}
           />

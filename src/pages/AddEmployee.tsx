@@ -34,15 +34,30 @@ function getStepContent(step: number) {
   }
 }
 
-let generalSchema = object({
-  nationalId: string().required(),
-  firstName: string().required(),
-  lastName: string().required(),
-  DOB: string().required(),
-  gender: string().required(),
-  maritalStatus: string().required()
-});
-
+let generalSchema: any = {
+  0: object({
+    nationalId: string().required(),
+    firstName: string().required(),
+    lastName: string().required(),
+    DOB: string().required(),
+    gender: string().required(),
+    maritalStatus: string().required()
+  }),
+  1: object({
+    country: string().required(),
+    city: string().required(),
+    address: string().required(),
+    phone: string().required(),
+    hireDate: string().required(),
+    monthlySalary: string().required()
+  }),
+  2: object({
+    department: string().required(),
+    qualifications: string().required(),
+    workPermitId: string().required(),
+    workPermitExpiryDate: string().required()
+  })
+};
 
 export default function Checkout() {
   const activeStep = useSelector((state: any) => state.formStep);
@@ -52,16 +67,7 @@ export default function Checkout() {
   const dispatch = useDispatch();
   
   const onSubmit = async () => {
-    await generalSchema.validate(form[activeStep], {
-			abortEarly: false
-		}).then((data) => {
-      dispatch(updateErrors(activeStep, {}));
-      setLoading(true);
-      setTimeout(() => {
-        dispatch(nextStep());
-        setLoading(false);
-      }, 2000);
-    }).catch((errors: any) => {
+    const errorHandling = (errors: any)  => {
 			let formErrorsList: any = {};
 			if(errors.inner) {
 				errors.inner.map((error: any) => {
@@ -70,7 +76,18 @@ export default function Checkout() {
 				});
 				dispatch(updateErrors(activeStep, formErrorsList));
 			}
-		});
+		};
+    const proceedStep = (data: any) => {
+      dispatch(updateErrors(activeStep, {}));
+      setLoading(true);
+      setTimeout(() => {
+        dispatch(nextStep());
+        setLoading(false);
+      }, 2000);
+    }
+
+    
+    await generalSchema[activeStep].validate(form[activeStep], {abortEarly: false}).then(proceedStep).catch(errorHandling);
   }
 
   const handleNext = () => {
@@ -85,9 +102,9 @@ export default function Checkout() {
   return (
     <>
       <CssBaseline />
-      <pre>
+      {/* <pre>
         {JSON.stringify(errors, null, 2)}
-      </pre>
+      </pre> */}
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
           <Typography component="h1" variant="h4" align="center">

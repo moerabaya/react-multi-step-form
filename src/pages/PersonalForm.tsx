@@ -3,32 +3,39 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { MuiTelInput } from 'mui-tel-input';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateForm } from '../state/actions';
 
+const CURRENT_STEP = 1;
 export default function PersonalForm() {
-  const [form, setForm] = React.useState({
-    country: ""
-  });
-  const Cities = {
+  const Cities: any = {
     "Jordan": ["Amman", "Irbid"],
     "UAE": ["AbuDhabi", "Dubai"],
     "KSA": ["Riyadh", "Jeddah"]
   }
 
+  const dispatch = useDispatch();
+  const form = useSelector((state: any) => state.formData[CURRENT_STEP]);
+  const errors = useSelector((state: any) => state.formErrors[CURRENT_STEP])
+
   const handleChange = (e: any) => {
-    const {value, name} = e.target;
-    setForm({
-      ...form,
-      [name]: value
-    })
+    const {name, value} = e.target;
+    handleForm(name, value);
+  }
+  const handleForm = (name: string, value: any) => {
+    dispatch(updateForm(CURRENT_STEP, name, value));
   }
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
         Job Details
       </Typography>
+      {/* <pre>
+        {JSON.stringify(form, null, 2)}
+      </pre> */}
       <Grid container spacing={3}>
         <Grid item xs={12}>
 					<FormControl fullWidth>
@@ -38,29 +45,35 @@ export default function PersonalForm() {
 							id="country"
               name="country"
 							value={form.country}
+              error={errors.country}
 							label="Country of Residence"
-              // variant="standard"
-							onChange={handleChange}
+							onChange={(e) => {
+                handleForm("city", "");
+                handleChange(e);
+              }}
 						>
 							<MenuItem value={"Jordan"}>Jordan</MenuItem>
 							<MenuItem value={"UAE"}>UAE</MenuItem>
 							<MenuItem value={"KSA"}>KSA</MenuItem>
 						</Select>
+            {errors["country"] && <FormHelperText>{errors["country"]}</FormHelperText>}
 					</FormControl>
 				</Grid>
         <Grid item xs={12}>
 					<FormControl fullWidth>
-						<InputLabel id="country-label">City</InputLabel>
+						<InputLabel id="city-label">City</InputLabel>
 						<Select
-							labelId="country-label"
-							id="country"
-							// value={age}
-              // vari`fant="standard"
-							label="Country of Residence"
-							// onChange={handleChange}
+							labelId="city-label"
+							id="city"
+              name="city"
+							value={form.city}
+              error={errors.city}
+							label="City"
+							onChange={handleChange}
 						>
-              {Cities.Jordan?.map((item: string) => <MenuItem value={item}>{item}</MenuItem>)}
+              {form.country && Cities[form.country!].map((item: string) => <MenuItem value={item}>{item}</MenuItem>)}
 						</Select>
+            {errors["city"] && <FormHelperText>{errors["city"]}</FormHelperText>}
 					</FormControl>
 				</Grid>
 				<Grid item xs={12}>
@@ -69,6 +82,10 @@ export default function PersonalForm() {
             id="address"
             name="address"
             label="Address"
+            value={form.address}
+            error={errors.address}
+            helperText={errors.address}
+            onChange={handleChange}
             fullWidth
             // variant="standard"
           />
@@ -76,8 +93,10 @@ export default function PersonalForm() {
 
         <Grid item xs={12}>
           <MuiTelInput
-          value={"+962"}
-          onChange={() => {}}
+          value={form.phone ? form.phone : form.country === "UAE" ? "+971" : form.country === "KSA" ? "+966" : "+962"}
+          onChange={(data) => handleForm("phone", data)}
+          error={errors.phone}
+          helperText={errors.phone}
           fullWidth
           onlyCountries={["JO", "AE", "SA"]}
            />
@@ -86,9 +105,10 @@ export default function PersonalForm() {
           <DatePicker
             label="Hire Date"
             inputFormat="MM/DD/YYYY"
-            value={"0"}
-            onChange={() => {}}
-            renderInput={(params) => <TextField {...params} fullWidth />}
+            value={form.hireDate}
+            onChange={(value) => handleForm("hireDate", value?.toString())}
+            renderInput={(params) => <TextField {...params} error={errors.hireDate}
+            helperText={errors.hireDate} fullWidth />}
           />
         </Grid>
 
@@ -96,9 +116,13 @@ export default function PersonalForm() {
           <TextField
             required
             id="monthly-salary"
-            name="monthly-salary"
+            name="monthlySalary"
             label="Monthly Salary"
             type="number"
+            value={form.monthlySalary}
+            error={errors.monthlySalary}
+            helperText={errors.monthlySalary}
+            onChange={handleChange}
             fullWidth
             // variant="standard"
           />
