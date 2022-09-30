@@ -12,7 +12,7 @@ export function* postDataSaga(action: any) {
     const result: object = yield call(() => axios.postForm('https://httpbin.org/post', action.payload.employee,
       {headers: {'content-type': 'application/x-www-form-urlencoded'}}
     ));
-    console.log(result);
+    // console.log(result);
     yield put(setEmployee(action.payload.employee));
     yield put(nextStep());
   } catch (e) {
