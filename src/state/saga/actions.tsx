@@ -1,3 +1,3 @@
 export const sagaActions = {
-  FETCH_DATA_SAGA: "FETCH_DATA_SAGA"
+  POST_DATA_SAGA: "form/createEmployee"
 };

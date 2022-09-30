@@ -8,6 +8,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { MuiTelInput } from 'mui-tel-input';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateForm } from '../state/actions';
+import EmployeeInterface from 'multi-step-form';
 
 const CURRENT_STEP = 1;
 export default function PersonalForm() {
@@ -18,7 +19,7 @@ export default function PersonalForm() {
   }
 
   const dispatch = useDispatch();
-  const form = useSelector((state: any) => state.formData[CURRENT_STEP]);
+  const form: EmployeeInterface = useSelector((state: any) => state.formData[CURRENT_STEP]);
   const errors = useSelector((state: any) => state.formErrors[CURRENT_STEP])
 
   const handleChange = (e: any) => {
@@ -48,7 +49,7 @@ export default function PersonalForm() {
               error={errors.country}
 							label="Country of Residence"
 							onChange={(e) => {
-                handleForm("city", "");
+                handleForm("City", "");
                 handleChange(e);
               }}
 						>
@@ -56,7 +57,7 @@ export default function PersonalForm() {
 							<MenuItem value={"UAE"}>UAE</MenuItem>
 							<MenuItem value={"KSA"}>KSA</MenuItem>
 						</Select>
-            {errors["country"] && <FormHelperText>{errors["country"]}</FormHelperText>}
+            {errors.country && <FormHelperText>{errors.country}</FormHelperText>}
 					</FormControl>
 				</Grid>
         <Grid item xs={12}>
@@ -71,9 +72,9 @@ export default function PersonalForm() {
 							label="City"
 							onChange={handleChange}
 						>
-              {form.country && Cities[form.country!].map((item: string) => <MenuItem value={item}>{item}</MenuItem>)}
+              {form["country"] && Cities[form.country!].map((item: string) => <MenuItem value={item}>{item}</MenuItem>)}
 						</Select>
-            {errors["city"] && <FormHelperText>{errors["city"]}</FormHelperText>}
+            {errors.city && <FormHelperText>{errors.city}</FormHelperText>}
 					</FormControl>
 				</Grid>
 				<Grid item xs={12}>
@@ -105,10 +106,10 @@ export default function PersonalForm() {
           <DatePicker
             label="Hire Date"
             inputFormat="MM/DD/YYYY"
-            value={form.hireDate}
+            value={form["hireDate"]}
             onChange={(value) => handleForm("hireDate", value?.toString())}
             renderInput={(params) => <TextField {...params} error={errors.hireDate}
-            helperText={errors.hireDate} fullWidth />}
+            helperText={errors["hireDate"]} fullWidth />}
           />
         </Grid>
 
@@ -119,9 +120,9 @@ export default function PersonalForm() {
             name="monthlySalary"
             label="Monthly Salary"
             type="number"
-            value={form.monthlySalary}
+            value={form["monthlySalary"]}
             error={errors.monthlySalary}
-            helperText={errors.monthlySalary}
+            helperText={errors["monthlySalary"]}
             onChange={handleChange}
             fullWidth
             // variant="standard"

@@ -1,27 +1,24 @@
 import { call, takeEvery, put } from "redux-saga/effects";
 import Axios from "axios";
-import { fetchData } from "../actions";
+import { createEmployee, setEmployee } from "../actions";
 import { sagaActions } from "./actions";
+import EmployeeInterface from "multi-step-form";
+import axios from "axios";
 
-let callAPI = async ({ url, method, data }: any) => {
-  return await Axios({
-    url,
-    method,
-    data
-  });
-};
 
-export function* fetchDataSaga() {
+export function* postDataSaga(action: any) {
   try {
-    // let result = yield call(() =>
-    //   callAPI({ url: "https://5ce2c23be3ced20014d35e3d.mockapi.io/api/todos" })
-    // );
-    // yield put(fetchData(result.data));
+    // do api call
+    const result: object = yield call(() => axios.post('https://thumbsnap.com/api/upload', action.payload.employee));
+    console.log(result);
+    yield put(setEmployee(action.payload.employee));
   } catch (e) {
-    yield put({ type: "TODO_FETCH_FAILED" });
+    console.log("error");
+    console.log(e);
   }
+
 }
 
 export default function* rootSaga() {
-  yield takeEvery(sagaActions.FETCH_DATA_SAGA, fetchDataSaga);
+  yield takeEvery(sagaActions.POST_DATA_SAGA, postDataSaga);
 }

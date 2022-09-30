@@ -14,9 +14,13 @@ import JobDetails from './JobDetails';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useDispatch, useSelector } from 'react-redux';
-import { nextStep, previousStep, updateErrors } from '../state/actions';
-import { object, string } from 'yup';
+import { createEmployee, nextStep, previousStep, updateErrors } from '../state/actions';
 import CircularProgress from '@mui/material/CircularProgress';
+import { Avatar, Grid } from '@mui/material';
+import { generalSchema } from '../utils/validationSchema';
+import { EmployeeEnum } from '../utils/constant';
+import EmployeeInterface from 'multi-step-form';
+import _ from 'lodash';
 
 const steps = ['General Information', 'Personal Details', 'Job Details'];
 
@@ -34,37 +38,20 @@ function getStepContent(step: number) {
   }
 }
 
-let generalSchema: any = {
-  0: object({
-    nationalId: string().required(),
-    firstName: string().required(),
-    lastName: string().required(),
-    DOB: string().required(),
-    gender: string().required(),
-    maritalStatus: string().required()
-  }),
-  1: object({
-    country: string().required(),
-    city: string().required(),
-    address: string().required(),
-    phone: string().required(),
-    hireDate: string().required(),
-    monthlySalary: string().required()
-  }),
-  2: object({
-    department: string().required(),
-    qualifications: string().required(),
-    workPermitId: string().required(),
-    workPermitExpiryDate: string().required()
-  })
-};
-
 export default function Checkout() {
   const activeStep = useSelector((state: any) => state.formStep);
-  const form = useSelector((state: any) => state.formData);
+  const form: EmployeeInterface[] = useSelector((state: any) => state.formData);
+  const employee = useSelector((state: any) => state.employee);
   const errors = useSelector((state: any) => state.formErrors);
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
+
+  React.useEffect(()=> {
+    const result = _.reduce(form, function(memo, current) { return _.assign(memo, current) },  {});
+    dispatch(createEmployee(result));
+    if(activeStep) {
+    }
+  }, [activeStep])
   
   const onSubmit = async () => {
     const errorHandling = (errors: any)  => {
@@ -85,18 +72,33 @@ export default function Checkout() {
         setLoading(false);
       }, 2000);
     }
-
-    
     await generalSchema[activeStep].validate(form[activeStep], {abortEarly: false}).then(proceedStep).catch(errorHandling);
   }
 
   const handleNext = () => {
     onSubmit();
-    // dispatch(nextStep())
   };
 
   const handleBack = () => {
     dispatch(previousStep());
+  };
+
+  const renderBlocks = () => {
+    const list: React.ReactNode[] = [];
+    Object.keys(employee).forEach(function(key, index) {
+      const i: keyof typeof EmployeeEnum = key as keyof typeof EmployeeEnum;
+      list.push(
+        <Grid key={EmployeeEnum[i]} container>
+          <Grid item xs={4} p={1}>
+            <strong>{EmployeeEnum[i]}</strong>
+          </Grid>
+          <Grid item xs={8} p={1}>
+            {employee[key]}
+          </Grid>
+        </Grid>
+      )
+    });
+    return list;
   };
 
   return (
@@ -121,12 +123,14 @@ export default function Checkout() {
             {activeStep === steps.length ? (
               <React.Fragment>
                 <Typography variant="h5" gutterBottom>
-                  Thank you for your creating an account.
+                  Employee Information
                 </Typography>
-                <Typography variant="subtitle1">
-                  Your account number is #2001539. We have emailed your
-                  confirmation.
-                </Typography>
+                <Grid container justifyContent="center">
+                  <Grid item p={4}>
+                    {employee.employeePhoto && <Avatar src={employee.employeePhoto}  sx={{ height: '90px', width: '90px' }} />}
+                  </Grid>
+                  {renderBlocks()}
+                </Grid>
               </React.Fragment>
             ) : (
               <React.Fragment>
