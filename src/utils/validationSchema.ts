@@ -18,7 +18,7 @@ export const generalSchema: any = {
     "country": string().required("Country is requried"),
     "city": string().required("City is requried"),
     "address": string().required("Address is requried"),
-    "phone": string().required("Phone is requried"),
+    "phone": string().required("Phone is requried").matches(/^\+(?:[0-9] ?){6,14}[0-9]$/, 'Phone number is not valid'),
     "hireDate": date().required("Hire Date is requried"),
     "monthlySalary": string().required("Monthly Salary is requried")
   }),

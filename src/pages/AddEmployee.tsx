@@ -145,7 +145,7 @@ export default function Checkout() {
                     sx={{ mt: 3, ml: 1 }}
                   >
                     {employee.loading && <CircularProgress style={{marginRight: "1em"}} size={14} />}
-                    {activeStep === steps.length - 1 ? 'Creates' : 'Next'}
+                    {activeStep === steps.length - 1 ? 'Create' : 'Next'}
                   </Button>
                 </Box>
               </React.Fragment>

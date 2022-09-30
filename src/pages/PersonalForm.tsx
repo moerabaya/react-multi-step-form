@@ -46,7 +46,7 @@ export default function PersonalForm() {
 							id="country"
               name="country"
 							value={form.country}
-              error={errors.country ? false : true}
+              error={errors.country ? true : false}
 							label="Country of Residence"
 							onChange={(e) => {
                 handleForm("City", "");
@@ -68,11 +68,11 @@ export default function PersonalForm() {
 							id="city"
               name="city"
 							value={form.city}
-              error={errors.city ? false : true}
+              error={errors.city ? true : false}
 							label="City"
 							onChange={handleChange}
 						>
-              {form["country"] && Cities[form.country!].map((item: string) => <MenuItem value={item}>{item}</MenuItem>)}
+              {form["country"] && Cities[form.country!].map((item: string) => <MenuItem key={item} value={item}>{item}</MenuItem>)}
 						</Select>
             {errors.city && <FormHelperText>{errors.city}</FormHelperText>}
 					</FormControl>
@@ -84,7 +84,7 @@ export default function PersonalForm() {
             name="address"
             label="Address"
             value={form.address}
-            error={errors.address ? false : true}
+            error={errors.address ? true : false}
             helperText={errors.address}
             onChange={handleChange}
             fullWidth
@@ -96,7 +96,7 @@ export default function PersonalForm() {
           <MuiTelInput
           value={form.phone ? form.phone : form.country === "UAE" ? "+971" : form.country === "KSA" ? "+966" : "+962"}
           onChange={(data) => handleForm("phone", data)}
-          error={errors.phone ? false : true}
+          error={errors.phone ? true : false}
           helperText={errors.phone}
           fullWidth
           onlyCountries={["JO", "AE", "SA"]}
@@ -108,7 +108,7 @@ export default function PersonalForm() {
             inputFormat="MM/DD/YYYY"
             value={form["hireDate"]}
             onChange={(value) => handleForm("hireDate", value?.toString())}
-            renderInput={(params) => <TextField {...params} error={errors.hireDate ? false : true}
+            renderInput={(params) => <TextField {...params} error={errors.hireDate ? true : false}
             helperText={errors["hireDate"]} fullWidth />}
           />
         </Grid>
@@ -120,8 +120,8 @@ export default function PersonalForm() {
             name="monthlySalary"
             label="Monthly Salary"
             type="number"
-            value={form["monthlySalary"]}
-            error={errors.monthlySalary ? false : true}
+            value={form.monthlySalary}
+            error={errors.monthlySalary ? true : false}
             helperText={errors["monthlySalary"]}
             onChange={handleChange}
             fullWidth
