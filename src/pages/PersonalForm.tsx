@@ -46,7 +46,7 @@ export default function PersonalForm() {
 							id="country"
               name="country"
 							value={form.country}
-              error={errors.country}
+              error={errors.country ? false : true}
 							label="Country of Residence"
 							onChange={(e) => {
                 handleForm("City", "");
@@ -68,7 +68,7 @@ export default function PersonalForm() {
 							id="city"
               name="city"
 							value={form.city}
-              error={errors.city}
+              error={errors.city ? false : true}
 							label="City"
 							onChange={handleChange}
 						>
@@ -84,7 +84,7 @@ export default function PersonalForm() {
             name="address"
             label="Address"
             value={form.address}
-            error={errors.address}
+            error={errors.address ? false : true}
             helperText={errors.address}
             onChange={handleChange}
             fullWidth
@@ -96,7 +96,7 @@ export default function PersonalForm() {
           <MuiTelInput
           value={form.phone ? form.phone : form.country === "UAE" ? "+971" : form.country === "KSA" ? "+966" : "+962"}
           onChange={(data) => handleForm("phone", data)}
-          error={errors.phone}
+          error={errors.phone ? false : true}
           helperText={errors.phone}
           fullWidth
           onlyCountries={["JO", "AE", "SA"]}
@@ -108,7 +108,7 @@ export default function PersonalForm() {
             inputFormat="MM/DD/YYYY"
             value={form["hireDate"]}
             onChange={(value) => handleForm("hireDate", value?.toString())}
-            renderInput={(params) => <TextField {...params} error={errors.hireDate}
+            renderInput={(params) => <TextField {...params} error={errors.hireDate ? false : true}
             helperText={errors["hireDate"]} fullWidth />}
           />
         </Grid>
@@ -121,7 +121,7 @@ export default function PersonalForm() {
             label="Monthly Salary"
             type="number"
             value={form["monthlySalary"]}
-            error={errors.monthlySalary}
+            error={errors.monthlySalary ? false : true}
             helperText={errors["monthlySalary"]}
             onChange={handleChange}
             fullWidth

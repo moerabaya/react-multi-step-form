@@ -7,6 +7,7 @@ const NEXT = 'form/next';
 const PREVIOUS = 'form/previous';
 
 export const nextStep = createAction(NEXT);
+
 export const previousStep = createAction(PREVIOUS);
 
 export const fetchData = createAction<{}>("form/fetch");
@@ -38,10 +39,20 @@ export const createEmployee = createAction(sagaActions.POST_DATA_SAGA, function 
   }
 });
 
-export const setEmployee = createAction("form/setEmployee", function prepare(employee: EmployeeInterface) {
+export const setEmployee = createAction("employee/set", function prepare(employee: EmployeeInterface) {
   return {
     payload: {
       employee
+    }
+  }
+});
+
+
+export const updateEmployee = createAction("employee/update", function prepare(loading: boolean, failed: boolean) {
+  return {
+    payload: {
+      loading,
+      failed
     }
   }
 });

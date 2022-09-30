@@ -1,3 +1,3 @@
 export const sagaActions = {
-  POST_DATA_SAGA: "form/createEmployee"
+  POST_DATA_SAGA: "employee/create"
 };

@@ -39,7 +39,7 @@ export default function JobDetails() {
 							id="department"
 							value={form["department"]}
 							label="Department"
-              error={errors["department"]}
+              error={errors["department"] ? true : false}
               // variant="standard"
               name="department"
 							onChange={handleChange}
@@ -52,11 +52,11 @@ export default function JobDetails() {
 					</FormControl>
 				</Grid>
         <Grid item xs={12}>
-          <FormControl error={errors["qualifications"]}>
+          <FormControl error={errors["qualifications"] ? true : false}>
             <FormLabel id="qualifications-group-label">Qualifications</FormLabel>
             <RadioGroup
               aria-labelledby="qualifications-group-label"
-              defaultValue={form["qualifications"]}
+              value={form["qualifications"]}
               name="qualifications"
               onChange={handleChange}
             >
@@ -71,7 +71,7 @@ export default function JobDetails() {
           <TextField
             required
             id="workPermitId"
-            error={errors["workPermitId"]}
+            error={errors["workPermitId"] ? true : false}
             helperText={errors["workPermitId"]}
             name="workPermitId"
             onChange={handleChange}
@@ -86,12 +86,12 @@ export default function JobDetails() {
             minDate={new Date()}
             value={form["workPermitExpiryDate"]}
             onChange={(value) => handleForm("workPermitExpiryDate", value?.toString())}
-            renderInput={(params) => <TextField {...params} error={errors["workPermitExpiryDate"]}
+            renderInput={(params) => <TextField {...params} error={errors["workPermitExpiryDate"] ? true : false}
             helperText={errors["workPermitExpiryDate"]} fullWidth />}
           />
         </Grid>
         <Grid item xs={12}>
-          <FormControl error={errors["employeePhoto"]} fullWidth>
+          <FormControl error={errors["employeePhoto"] ? true : false} fullWidth>
             <FormLabel id="qualifications-group-label">Employee Photo</FormLabel>
             <FileUpload onChange={(value) => handleForm("employeePhoto", value)} />
             {errors["employeePhoto"] && <FormHelperText>{errors["employeePhoto"]}</FormHelperText>}

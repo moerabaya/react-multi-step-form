@@ -36,7 +36,7 @@ const GeneralForm = forwardRef((props, ref) => {
         <Grid item xs={12}>
           <TextField
             required
-            error={errors.nationalId}
+            error={errors.nationalId ? true : false}
             helperText={errors.nationalId}
             value={form.nationalId}
             id="nationalId"
@@ -49,7 +49,7 @@ const GeneralForm = forwardRef((props, ref) => {
         <Grid item xs={12} sm={6}>
           <TextField
             required
-            error={errors.firstName}
+            error={errors.firstName ? true : false}
             helperText={errors.firstName}
             value={form.firstName}
             id="firstName"
@@ -63,7 +63,7 @@ const GeneralForm = forwardRef((props, ref) => {
         <Grid item xs={12} sm={6}>
           <TextField
             required
-            error={errors.lastName}
+            error={errors.lastName ? true : false}
             helperText={errors.lastName}
             value={form.lastName}
             id="lastName"
@@ -82,16 +82,16 @@ const GeneralForm = forwardRef((props, ref) => {
             value={form.DOB}
             maxDate={new Date()}
             onChange={(value) => handleForm("DOB", value?.toString())}
-            renderInput={(params) => <TextField {...params} error={errors.DOB} helperText={errors.DOB} fullWidth />}
+            renderInput={(params) => <TextField {...params} error={errors.DOB ? true : false} helperText={errors.DOB} fullWidth />}
           />
         </Grid>
 
         <Grid item xs={12}>
-          <FormControl error={errors.gender}>
+          <FormControl error={errors.gender ? true : false}>
             <FormLabel id="gender-radio-buttons-group-label">Gender</FormLabel>
             <RadioGroup
               aria-labelledby="gender-radio-buttons-group-label"
-              defaultValue={form.gender}
+              value={form.gender}
               name="gender"
               onChange={handleChange}
             >
@@ -102,11 +102,11 @@ const GeneralForm = forwardRef((props, ref) => {
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <FormControl error={errors.maritalStatus}>
+          <FormControl error={errors.maritalStatus ? true : false}>
             <FormLabel id="status-radio-buttons-group-label">Marital Status</FormLabel>
             <RadioGroup
               aria-labelledby="status-radio-buttons-group-label"
-              defaultValue={form.maritalStatus}
+                value={form.maritalStatus}
               name="maritalStatus"
               onChange={handleChange}
             >

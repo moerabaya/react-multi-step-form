@@ -16,7 +16,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { createEmployee, nextStep, previousStep, updateErrors } from '../state/actions';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Avatar, Grid } from '@mui/material';
+import { Alert, Avatar, Grid } from '@mui/material';
 import { generalSchema } from '../utils/validationSchema';
 import { EmployeeEnum } from '../utils/constant';
 import EmployeeInterface from 'multi-step-form';
@@ -42,16 +42,7 @@ export default function Checkout() {
   const activeStep = useSelector((state: any) => state.formStep);
   const form: EmployeeInterface[] = useSelector((state: any) => state.formData);
   const employee = useSelector((state: any) => state.employee);
-  const errors = useSelector((state: any) => state.formErrors);
-  const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
-
-  React.useEffect(()=> {
-    const result = _.reduce(form, function(memo, current) { return _.assign(memo, current) },  {});
-    dispatch(createEmployee(result));
-    if(activeStep) {
-    }
-  }, [activeStep])
   
   const onSubmit = async () => {
     const errorHandling = (errors: any)  => {
@@ -66,11 +57,12 @@ export default function Checkout() {
 		};
     const proceedStep = (data: any) => {
       dispatch(updateErrors(activeStep, {}));
-      setLoading(true);
-      setTimeout(() => {
+      if(activeStep === 2) {
+        const result = _.reduce(form, function(memo, current) { return _.assign(memo, current) },  {});
+        dispatch(createEmployee(result));
+      } else {
         dispatch(nextStep());
-        setLoading(false);
-      }, 2000);
+      }
     }
     await generalSchema[activeStep].validate(form[activeStep], {abortEarly: false}).then(proceedStep).catch(errorHandling);
   }
@@ -85,15 +77,15 @@ export default function Checkout() {
 
   const renderBlocks = () => {
     const list: React.ReactNode[] = [];
-    Object.keys(employee).forEach(function(key, index) {
+    Object.keys(employee?.employee).forEach(function(key, index) {
       const i: keyof typeof EmployeeEnum = key as keyof typeof EmployeeEnum;
       list.push(
-        <Grid key={EmployeeEnum[i]} container>
+        <Grid key={index} container>
           <Grid item xs={4} p={1}>
             <strong>{EmployeeEnum[i]}</strong>
           </Grid>
           <Grid item xs={8} p={1}>
-            {employee[key]}
+            {employee?.employee[key]}
           </Grid>
         </Grid>
       )
@@ -105,7 +97,7 @@ export default function Checkout() {
     <>
       <CssBaseline />
       {/* <pre>
-        {JSON.stringify(errors, null, 2)}
+        {JSON.stringify(employee, null, 2)}
       </pre> */}
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
@@ -127,7 +119,7 @@ export default function Checkout() {
                 </Typography>
                 <Grid container justifyContent="center">
                   <Grid item p={4}>
-                    {employee.employeePhoto && <Avatar src={employee.employeePhoto}  sx={{ height: '90px', width: '90px' }} />}
+                    {employee?.employee.employeePhoto && <Avatar src={employee?.employee.employeePhoto}  sx={{ height: '90px', width: '90px' }} />}
                   </Grid>
                   {renderBlocks()}
                 </Grid>
@@ -135,6 +127,11 @@ export default function Checkout() {
             ) : (
               <React.Fragment>
                 {getStepContent(activeStep)}
+                {employee.failed && 
+                  <Box pt={3}>
+                    <Alert severity="error">Something went wrong, please try again.</Alert>
+                  </Box>
+                }
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                   {activeStep !== 0 && (
                     <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
@@ -144,11 +141,11 @@ export default function Checkout() {
                   <Button
                     variant="contained"
                     onClick={handleNext}
-                    disabled={loading}
+                    disabled={employee.loading}
                     sx={{ mt: 3, ml: 1 }}
                   >
-                    {loading && <CircularProgress style={{marginRight: "1em"}} size={14} />}
-                    {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
+                    {employee.loading && <CircularProgress style={{marginRight: "1em"}} size={14} />}
+                    {activeStep === steps.length - 1 ? 'Creates' : 'Next'}
                   </Button>
                 </Box>
               </React.Fragment>
