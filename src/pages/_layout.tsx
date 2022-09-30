@@ -30,7 +30,7 @@ export default function Layout({children}: any) {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
 				<Navigation />
-        {(!process.env.REACT_APP_IMAGE_UPLOAD_KEY || !process.env.REACT_APP_MOCK_API_KEY) && <Alert severity="error" variant="filled">Please add required secret keys documented in <strong>README</strong> file to be able to run this form.</Alert>}
+        {!process.env.REACT_APP_IMAGE_UPLOAD_KEY && <Alert severity="error" variant="filled">Please add required secret keys documented in <strong>README</strong> file to be able to run this form.</Alert>}
         {children}
       </ThemeProvider>
     </ColorModeContext.Provider>
